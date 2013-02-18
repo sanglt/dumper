@@ -130,8 +130,9 @@ class Dumper_Tests_Dumper {
   public function testBackupNoneExistingOgNode() {
     try {
       // Execute the backup process with node-NID is an NID of non-object node.
-      // …
+      $dumper = new Dumper_Controller_Og(9999999);
 
+      // If this line is run, the exception is not throw.
       $this->assertTrue(FALSE);
     }
     catch (Dumper_Controller_Exception_Not_Found_Og $e) {
@@ -141,9 +142,11 @@ class Dumper_Tests_Dumper {
 
   public function testBackupInvalidOgNode() {
     try {
-      // Execute the backup process with node-NID is an NID of non-object node.
-      // …
+      // Execute the backup process with node-NID is an NID of object-node, but
+      // this node is not an og-node.
+      $dumper = new Dumper_Controller_Og($this->node_1);
 
+      // If this line is run, the exception is not throw.
       $this->assertTrue(FALSE);
     }
     catch (Dumper_Controller_Exception_Invalid_Og $e) {
