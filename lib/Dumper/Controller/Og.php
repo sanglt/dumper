@@ -1,8 +1,26 @@
 <?php
 
+/**
+ * Wrapper class to queue and process the OG content.
+ *
+ * @task queue   Queue content
+ * @task process Process queued content
+ */
 class Dumper_Controller_Og {
+  /**
+   * Node object.
+   *
+   * @var stdClass
+   */
   public $school;
-  public $queue_table = 'aio_dumper_queue';
+
+  /**
+   * Table
+   *
+   * @var string
+   */
+  public $queue_table = 'dumper_content_queue';
+
   public $timeout = 300;
   public $entity_types = array(
     'comment', 'node',
@@ -69,8 +87,12 @@ class Dumper_Controller_Og {
     }
   }
 
+  /**
+   *
+   * @task process
+   */
   public function process() {
     $process = new Dumper_Controller_Og_Process($this);
-    $process->process();
+    return $process->process();
   }
 }
