@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function dumper_schema() {
+  $schema['dumper_content_queue'] = array(
+    'description' => 'Table to queue school content',
+    'fields' => array(
+      'nid'         => array('description' => 'NID of OG', 'type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
+      'processed'   => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+      'entity_type' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''),
+      'entity_id'   => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
+    ),
+    'primary key' => array('nid', 'entity_type', 'entity_id'),
+    'indexes' => array(
+      'entity_type' => array(array('entity_type', 4)),
+      'processed'   => array('processed'),
+    ),
+  );
+
+  return $schema;
+}
