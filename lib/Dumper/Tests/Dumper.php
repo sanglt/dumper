@@ -146,7 +146,7 @@ class Dumper_Tests_Dumper {
 
       $this->assertTrue(FALSE);
     }
-    catch (Dumper_Controller_Exception_Og_Not_Found $e) {
+    catch (Dumper_Controller_Exception_Invalid_Og $e) {
       $this->assertTrue(TRUE);
     }
   }
