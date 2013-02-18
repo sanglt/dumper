@@ -68,7 +68,7 @@ class Dumper_Controller_Og {
 
     if (!empty($class)) {
       $controller = new $class($this->school, $entity_type);
-      if (class_implements($controller, 'Dumper_Content_Interface')) {
+      if (class_implements($controller, 'Dumper_Content_Base_Interface')) {
         return $controller;
       }
 
