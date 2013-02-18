@@ -11,6 +11,7 @@
  *  drush dumper_restore %nid %date
  * @TODO: Implements hook og menu-item.
  * @TODO: Implements hook og permission.
+ * @TODO: Save entity path if supported.
  */
 
 /**

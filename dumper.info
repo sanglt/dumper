@@ -6,3 +6,4 @@ core = 7.x
 dependencies[] = comment
 dependencies[] = og
 dependencies[] = migrate
+dependencies[] = uuid
