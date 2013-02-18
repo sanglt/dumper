@@ -2,13 +2,6 @@
 
 abstract class Dumper_Content_Base_Entity extends Dumper_Content_Controller {
   /**
-   * Entity type.
-   *
-   * @var string
-   */
-  public $entity_type;
-
-  /**
    * Get fields of the entity.bundle.
    */
   public function getFields() {}
@@ -25,6 +18,11 @@ abstract class Dumper_Content_Base_Entity extends Dumper_Content_Controller {
     }
   }
 
+  /**
+   * Write an entity to queue by ID.
+   *
+   * @param int $entity_id
+   */
   public function queueItem($entity_id) {
     return db_insert($this->queue_table, array(
       'og_id' => $this->school->identifier(),
@@ -41,6 +39,11 @@ abstract class Dumper_Content_Base_Entity extends Dumper_Content_Controller {
   public function getNextQueueItems() {
   }
 
+  /**
+   * Process a queued entity by ID.
+   *
+   * @param int $entity_id
+   */
   public function processQueueItem($entity_id) {
   }
 }

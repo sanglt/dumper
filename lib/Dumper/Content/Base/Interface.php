@@ -1,6 +1,6 @@
 <?php
 
-interface Dumper_Content_Interface {
+interface Dumper_Content_Base_Interface {
   public function __contruct($school, $entity_type, $entity = NULL, $storage = NULL);
   public function setEntity($entity);
   public function queueItems();

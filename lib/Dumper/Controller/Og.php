@@ -41,6 +41,9 @@ class Dumper_Controller_Og {
       case 'comment':
         $class = 'Dumper_Content_Comment';
         break;
+      case 'file':
+        $class = 'Dumper_Content_File';
+        break;
       case 'node':
         $class = 'Dumper_Content_Node';
         break;
