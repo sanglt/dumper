@@ -1,0 +1,33 @@
+<?php
+/**
+ * @file dumper.module
+ *
+ * Module to help dump and restore OG content.
+ *
+ * @TODO: Autoloader callback.
+ * @TODO: Drush command to dump an og
+ *  drush dumper_backup %nid %date
+ * @TODO: Drush command to restore an og
+ *  drush dumper_restore %nid %date
+ * @TODO: Implements hook og menu-item.
+ * @TODO: Implements hook og permission.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function dumper_permission() {
+  return array(
+    'dumper backup' => array(
+      'title' => 'Backup OG content',
+      'description' => '',
+    ),
+    'dumper restore' => array(
+      'title' => 'Restore OG content',
+      'description' => '',
+    ),
+  );
+}
+
+# Implements hook_menu().
+# function dumper_menu() {}

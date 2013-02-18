@@ -1,4 +1,7 @@
 <?php
+/**
+ * @TODO Save entity path if supported.
+ */
 
 $school = og_load($school_id = 123);
 $dumper = new Dumper_Controller_Og($school);
