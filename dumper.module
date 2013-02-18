@@ -12,6 +12,7 @@
  * @TODO: Implements hook og menu-item.
  * @TODO: Implements hook og permission.
  * @TODO: Save entity path if supported.
+ * @TODO: Replace school with og-node.
  */
 
 /**

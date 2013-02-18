@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @see Dumper_Controller_Og
+ */
 class Dumper_Tests_Dumper {
   /**
    * Organic Group node
@@ -127,6 +130,9 @@ class Dumper_Tests_Dumper {
     $this->assertEqual(get_class($this->comment_2), 'stdClass');
   }
 
+  /**
+   * @covers Dumper_Controller_Og::__construct().
+   */
   public function testBackupNoneExistingOgNode() {
     try {
       // Execute the backup process with node-NID is an NID of non-object node.
@@ -154,5 +160,9 @@ class Dumper_Tests_Dumper {
     }
   }
 
-  public function testBackupValidOgNode() {}
+  public function testBackupValidOgNode() {
+    $dumper = new Dumper_Controller_Og($this->og);
+    $dumper->queue();
+    $dumper->process();
+  }
 }

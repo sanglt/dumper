@@ -32,8 +32,13 @@ class Dumper_Controller_Og {
   /**
    * @task config
    */
-  public function __construct($school) {
-    $this->schoold = $school;
+  public function __construct($og_node) {
+    if ($this->validateOg($og_node)) {
+      $this->school = $og_node;
+    }
+  }
+
+  public static function validateOg($og_node) {
   }
 
   public function getDataController($entity_type) {
