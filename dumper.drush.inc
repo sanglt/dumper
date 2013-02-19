@@ -13,6 +13,9 @@ function dumper_drush_command() {
     'description' => 'Backup contents in an organic group',
     'callback' => 'dumper_drush_command_backup',
     'arguments' => array('nid' => 'Node ID of organic group'),
+    'options' => array(
+      'entity_types' => 'List of types of entity to be backed up.',
+    ),
     'examples' => array(
       'drush dumper_backup 3345' => 'Backup content for organic group #3345.',
     ),
@@ -31,13 +34,6 @@ function dumper_drush_command() {
   );
 
   return $items;
-}
-
-/**
- * Implement drush_hook_COMMAND_validate().
- */
-function drush_dumper_backup_validate($args = NULL) {
-  drush_print_r($args);
 }
 
 /**
