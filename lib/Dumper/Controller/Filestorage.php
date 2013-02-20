@@ -18,7 +18,18 @@ class Dumper_Controller_Filestorage {
     return is_writable($this->path);
   }
 
+  /**
+   * Write data to file stystem.
+   *
+   * @param mixed $data
+   * @param int $replace
+   * @return boolean
+   */
   public function write($data, $replace = FILE_EXISTS_REPLACE) {
+    if (!is_string($data)) {
+      $data = json_encode($data);
+    }
+
     return file_unmanaged_save_data($data, $this->getPath(), $mode);
   }
 

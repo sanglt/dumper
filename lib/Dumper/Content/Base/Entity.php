@@ -13,7 +13,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    */
   public function getItemIds() {
     $select = db_select('og_membership', 'ogm');
-    $select->condition('ogm.gid', $this->og->nid);
+    $select->condition('ogm.gid', $this->og_controller->og_node->nid);
     $select->condition('ogm.group_type', 'node');
     $select->condition('ogm.entity_type', $this->entity_type);
     $select->fields('ogm', array('etid'));
@@ -27,8 +27,8 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    */
   public function queueItems() {
     // Delete the current queue
-    $query = db_delete($this->queue_table)
-      ->condition('gid', $this->og->nid)
+    db_delete($this->queue_table)
+      ->condition('gid', $this->og_controller->og_node->nid)
       ->condition('entity_type', $this->entity_type)
       ->execute();
 
@@ -45,7 +45,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   public function queueItem($entity_id) {
     return db_insert($this->queue_table)
       ->fields(array(
-        'gid' => $this->og->nid,
+        'gid' => $this->og_controller->og_node->nid,
         'entity_type' => $this->entity_type,
         'entity_id' => $entity_id,
         'processed' => 0
@@ -54,18 +54,14 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   }
 
   /**
-   * Wrapper function to process the queues.
+   * Process a queued entity item.
    *
-   * @task process
+   * @param Dumper_Data_QueueItem $queue_item
    */
-  public function getNextQueueItems() {
-  }
-
-  /**
-   * Process a queued entity by ID.
-   *
-   * @param int $entity_id
-   */
-  public function processQueueItem($entity_id) {
+  public function processQueueItem(Dumper_Data_QueueItem $queue_item) {
+    $entity = entity_load_single($queue_item->entity_type, $queue_item->entity_id);
+    drush_print_r(__FUNCTION__);
+    drush_print_r($entity);
+    return;
   }
 }

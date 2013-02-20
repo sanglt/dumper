@@ -4,9 +4,9 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
   /**
    * OG node object.
    *
-   * @var stdClass
+   * @var Dumper_Controller_Og
    */
-  public $og;
+  public $og_controller;
 
   /**
    *
@@ -17,8 +17,9 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
   public $queue_table = 'dumper_content_queue';
 
   /**
-   *
-   * @var type
+   * Storage controller.
+   * 
+   * @var Dumper_Controller_Filestorage
    */
   public $storage;
 
@@ -29,8 +30,8 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
    */
   public $entity_type;
 
-  public function __construct($og, $entity_type, $entity = NULL, $storage = NULL) {
-    $this->og = $og;
+  public function __construct($og_controller, $entity_type, $entity = NULL, $storage = NULL) {
+    $this->og_controller = $og_controller;
     $this->entity_type = $entity_type;
 
     if (!is_null($entity)) {
@@ -75,7 +76,7 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
   public function processQueuedItems() {
   }
 
-  public function processQueuedItem($entity_id) {
+  public function processQueuedItem(Dumper_Data_QueueItem $queue_item) {
   }
 
   public function queueItems() {

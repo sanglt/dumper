@@ -18,7 +18,7 @@ class Dumper_Controller_Og_Process {
    *
    * @var int
    */
-  public $time_out = 300; // 5 minutes
+  public $timeout = 300; // 5 minutes
 
   public function __construct($og_controller) {
     $this->og_controller = $og_controller;
@@ -34,8 +34,14 @@ class Dumper_Controller_Og_Process {
     $select = db_select($this->og_controller->queue_table, 'queue');
     $select->condition('queue.processed', 0);
     $select->fields('queue', array('entity_type', 'entity_id'));
-    $item = $select->execute()->fetchObject();
-    return new Dumper_Data_QueueItem($this->school, $item->entity_type, $item->entity_id);
+    $select->range(0, 1);
+
+    if ($item = $select->execute()->fetchObject()) {
+      drush_print_r($item); exit;
+      return new Dumper_Data_QueueItem($this->og_controller->og_node->nid, $item->entity_type, $item->entity_id);
+    }
+
+    return FALSE;
   }
 
   /**
@@ -46,26 +52,34 @@ class Dumper_Controller_Og_Process {
   public function process() {
     $time_start = time();
 
-    while (time() - $time_start < $this->timeout) {
-      if ($queue_item = $this->getNextQueueItem()) {
-        if (FALSE !== $this->processQueueItem($queue_item)) {
-          db_update($this->og_controller->queue_table)
-            ->fields(array('processed' => 1))
-            ->condition('entity_type', $queue_item->entity_type)
-            ->condition('entity_id', $queue_item->entity_id)
-            ->execute();
-        }
-        else {
-          if (function_exists('drush_set_error')) {
-            drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
-          }
-        }
+    while (time() - $time_start <= $this->timeout) {
+      if (!$queue_item = $this->getNextQueueItem()) {
+        break;
+      }
+
+      if (FALSE !== $this->processQueueItem($queue_item)) {
+        drush_print_r($queue_item);
+        db_update($this->og_controller->queue_table)
+          ->fields(array('processed' => 1))
+          ->condition('entity_type', $queue_item->entity_type)
+          ->condition('entity_id', $queue_item->entity_id)
+          ->execute();
+        continue;
+      }
+      elseif (function_exists('drush_set_error')) {
+        drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
       }
     }
   }
 
-  public function processQueueItem(QueueItem $queue_item) {
-    $controller = $this->getDataController($queue_item->entity_type);
-    return $controller->processQueueItem($queue_item->entity_id);
+  /**
+   * Process a queue item.
+   *
+   * @param Dumper_Data_QueueItem $queue_item
+   * @return type
+   */
+  public function processQueueItem($queue_item) {
+    $controller = $this->og_controller->getDataController($queue_item->entity_type);
+    return $controller->processQueueItem($queue_item);
   }
 }

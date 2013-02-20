@@ -8,7 +8,7 @@ class Dumper_Tests_Queue  extends Dumper_Tests_Base {
     // Queue all contents for dumping
     $this->og_controller->queue();
 
-    // …
+    // Check the our items are queued.
     $this->assertIdentical(TRUE, $this->isInQueue('user', $this->user_1->uid));
     $this->assertIdentical(TRUE, $this->isInQueue('user', $this->user_2->uid));
     $this->assertIdentical(TRUE, $this->isInQueue('node', $this->node_1->nid));

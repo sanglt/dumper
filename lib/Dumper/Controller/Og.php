@@ -15,7 +15,7 @@ class Dumper_Controller_Og {
   public $og_node;
 
   /**
-   * Table
+   * Table name
    *
    * @var string
    */
@@ -26,10 +26,8 @@ class Dumper_Controller_Og {
    *
    * @var array
    */
-  public $entity_types = array( # 'og_membership_type', 'og_membership',
-    'comment', 'node',
-    'taxonomy_vocabulary', 'taxonomy_term',
-    'user'
+  public $entity_types = array(
+    'user', 'node', 'comment', 'taxonomy_vocabulary', 'taxonomy_term',
   );
 
   /**
@@ -104,7 +102,7 @@ class Dumper_Controller_Og {
     }
 
     if (!empty($class)) {
-      $controller = new $class($this->og_node, $entity_type);
+      $controller = new $class($this, $entity_type);
       if (class_implements($controller, 'Dumper_Content_Base_Interface')) {
         return $controller;
       }

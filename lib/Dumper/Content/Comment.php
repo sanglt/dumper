@@ -3,7 +3,7 @@
 class Dumper_Content_Comment extends Dumper_Content_Base_Entity {
   public function getItemIds() {
     $select = db_select('og_membership', 'ogm');
-    $select->condition('ogm.gid', $this->og->nid);
+    $select->condition('ogm.gid', $this->og_controller->og_node->nid);
     $select->condition('ogm.group_type', 'node');
     $select->condition('ogm.entity_type', 'node');
     $select->innerJoin('node', 'node', 'ogm.etid = node.nid');
