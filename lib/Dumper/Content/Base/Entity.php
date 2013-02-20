@@ -1,6 +1,6 @@
 <?php
 
-abstract class Dumper_Content_Base_Entity extends Dumper_Content_Controller {
+class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   /**
    * Get fields of the entity.bundle.
    */
@@ -25,7 +25,7 @@ abstract class Dumper_Content_Base_Entity extends Dumper_Content_Controller {
    */
   public function queueItem($entity_id) {
     return db_insert($this->queue_table, array(
-      'og_id' => $this->school->identifier(),
+      'og_id' => $this->og->identifier(),
       'entity_type' => $this->entity_type,
       'entity_id' => $nid,
     ))->execute();

@@ -12,7 +12,7 @@ class Dumper_Controller_Og {
    *
    * @var stdClass
    */
-  public $school;
+  public $og_node;
 
   /**
    * Table
@@ -33,14 +33,44 @@ class Dumper_Controller_Og {
    * @task config
    */
   public function __construct($og_node) {
-    if ($this->validateOg($og_node)) {
-      $this->school = $og_node;
+    if ($this->validateOgNode($og_node)) {
+      $this->og_node = $og_node;
     }
   }
 
-  public static function validateOg($og_node) {
+  /**
+   * Validate is a node a valid organic group.
+   *
+   * @param stdClass $og_node
+   * @return boolean
+   * @throws Dumper_Controller_Exception_Invalid_Og
+   */
+  public static function validateOgNode($og_node) {
+    if (!is_object($og_node)) {
+      throw new Dumper_Controller_Exception_Invalid_Og('Is not an object.');
+    }
+
+    if (!isset($og_node->nid) || !isset($og_node->type) || !isset($og_node->vid)) {
+      throw new Dumper_Controller_Exception_Invalid_Og('Object is not a node.');
+    }
+
+    if (!og_is_group('node', $og_node)) {
+      $wrapper = entity_metadata_wrapper('node', $og_node);
+
+      throw new Dumper_Controller_Exception_Invalid_Og('Node is not an organic group.');
+    }
+
+    return TRUE;
   }
 
+  /**
+   * Get entity-controller by entity type.
+   *
+   * @param string $entity_type
+   * @return Dumper_Content_Base_Entity
+   * @throws Dump_Controller_Exception_Not_Found_Controller
+   * @throws Dump_Controller_Exception_Malware_Interface
+   */
   public function getDataController($entity_type) {
     switch ($entity_type) {
       case 'comment':
@@ -72,7 +102,7 @@ class Dumper_Controller_Og {
     }
 
     if (!empty($class)) {
-      $controller = new $class($this->school, $entity_type);
+      $controller = new $class($this->og_node, $entity_type);
       if (class_implements($controller, 'Dumper_Content_Base_Interface')) {
         return $controller;
       }
@@ -91,7 +121,7 @@ class Dumper_Controller_Og {
   public function queue() {
     foreach ($this->entity_types as $entity_type) {
       $controller = $this->getDataController($entity_type);
-      $controller->queue();
+      $controller->queueItem();
     }
   }
 

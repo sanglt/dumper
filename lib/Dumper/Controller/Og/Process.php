@@ -20,7 +20,7 @@ class Dumper_Controller_Og_Process {
    */
   public function getNextQueueItem() {
     $select = db_select($this->og->queue_table, 'queue');
-    $select->condition('queue.entity_type', $this->og->school->entityType());
+    $select->condition('queue.entity_type', $this->og->og_node->entityType());
     $select->condition('queue.processed', 0);
     $item = $select->execute()->fetchObject();
     return new Dumper_Data_QueueItem($this->school, $item->entity_type, $item->entity_id);

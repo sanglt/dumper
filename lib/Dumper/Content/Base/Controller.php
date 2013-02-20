@@ -1,12 +1,12 @@
 <?php
 
-abstract class Dumper_Content_Base_Controller implements Dumper_Content_Interface {
+class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
   /**
    * OG node object.
    *
    * @var stdClass
    */
-  public $school;
+  public $og;
 
   /**
    *
@@ -27,8 +27,8 @@ abstract class Dumper_Content_Base_Controller implements Dumper_Content_Interfac
    */
   public $entity_type;
 
-  public function __construct($school, $entity_type, $entity = NULL, $storage = NULL) {
-    $this->school = $school;
+  public function __construct($og, $entity_type, $entity = NULL, $storage = NULL) {
+    $this->og = $og;
 
     if (!is_null($entity)) {
       $this->entity = $entity;
@@ -38,7 +38,7 @@ abstract class Dumper_Content_Base_Controller implements Dumper_Content_Interfac
       $this->storage = $storage;
     }
     else {
-      $path  = $this->school>identifier() . '/';
+      $path  = $this->og->identifier() . '/';
       $path .= $this->entity->entityType() . '/';
       $path .= $this->entity->identifier();
       $this->storage = new Dumper_Controller_Filestorage($path);
@@ -69,7 +69,19 @@ abstract class Dumper_Content_Base_Controller implements Dumper_Content_Interfac
     return FALSE;
   }
 
-  public function rollback() {
-    $this->storage->delete();
+  public function processQueuedItems() {
+  }
+
+  public function processQueuedItem($entity_id) {
+  }
+
+  public function queueItems() {
+  }
+
+  public function queueItem($entity_id) {
+  }
+
+  public function setEntity($entity) {
+    $this->entity = $entity;
   }
 }
