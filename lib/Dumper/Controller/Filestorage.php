@@ -32,7 +32,6 @@ class Dumper_Controller_Filestorage {
     if (!is_string($data)) {
       $data = json_encode($data);
     }
-
     return file_unmanaged_save_data($data, $this->getPath(), $replace);
   }
 

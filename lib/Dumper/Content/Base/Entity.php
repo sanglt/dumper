@@ -59,11 +59,15 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @param Dumper_Data_QueueItem $queue_item
    */
   public function processQueueItem(Dumper_Data_QueueItem $queue_item) {
-    drush_print_r($queue_item);
+    if (function_exists('drush_log')) {
+      drush_log(" › Processing {$queue_item->entity_type}#{$queue_item->entity_id}");
+    }
+
     $entity = entity_load_single($queue_item->entity_type, $queue_item->entity_id);
     $path  = "private://dumper/{$this->og_controller->og_node->nid}";
     $path .= "/{$queue_item->entity_type}/{$queue_item->entity_id}.json";
     $this->storage->setPath($path);
+    
     return $this->storage->write($entity);
   }
 }
