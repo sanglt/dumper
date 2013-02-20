@@ -4,17 +4,14 @@
  *
  * Module to help dump and restore OG content.
  *
- * @TODO: Autoloader callback.
- * @TODO: Drush command to dump an og
- *  drush dumper_backup %nid %date
- * @TODO: Drush command to restore an og
- *  drush dumper_restore %nid %date
  * @TODO: Implements hook og menu-item.
  * @TODO: Implements hook og permission.
  * @TODO: Save entity path if supported.
- * @TODO: Replace school with og-node.
  */
 
+/**
+ * Register our auto loader
+ */
 spl_autoload_register('dumper_autoload');
 
 /**
@@ -30,8 +27,6 @@ function dumper_autoload($class) {
       require_once $file;
     }
     else {
-      drush_print_r("Fail on loading {$class}. File is not existing: {$file}");
-      drush_print_r(debug_backtrace());
       throw new Exception("Autoload fails: {$class}");
     }
   }
