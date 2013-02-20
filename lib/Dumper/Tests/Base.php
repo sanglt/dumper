@@ -5,6 +5,13 @@
  */
 class Dumper_Tests_Base extends DrupalUnitTestCase {
   /**
+   * Og Dumper Controller.
+   *
+   * @var Dumper_Controller_Og
+   */
+  public $og_controller;
+
+  /**
    * Organic Group node
    *
    * @var stdClass
@@ -68,6 +75,7 @@ class Dumper_Tests_Base extends DrupalUnitTestCase {
   public function setUp() {
     $this->configStructure();
     $this->createDummyData();
+    $this->og_controller = new Dumper_Controller_Og($this->og);
   }
 
   /**
