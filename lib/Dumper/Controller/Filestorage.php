@@ -1,21 +1,24 @@
 <?php
 
 class Dumper_Controller_Filestorage {
-  public $base_path;
+  public $path;
 
-  public function __construct($base_path) {
-    $this->base_path = "private://{$base_path}";
+  public function setPath($path) {
+    $this->path = $path;
   }
 
   public function getPath() {
     if (!$this->isWritable()) {
-      throw new DumperFileStorageException("File is not writable: {$path}");
+      throw new DumperFileStorageException("File is not writable: `{$this->path}`");
     }
     return $this->path;
   }
 
   public function isWritable() {
-    return is_writable($this->path);
+    if (file_exists($this->path)) {
+      return is_writable($this->path);
+    }
+    return file_prepare_directory($dir = dirname($this->path), FILE_CREATE_DIRECTORY);
   }
 
   /**
@@ -30,7 +33,7 @@ class Dumper_Controller_Filestorage {
       $data = json_encode($data);
     }
 
-    return file_unmanaged_save_data($data, $this->getPath(), $mode);
+    return file_unmanaged_save_data($data, $this->getPath(), $replace);
   }
 
   public function delete() {

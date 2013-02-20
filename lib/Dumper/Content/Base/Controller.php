@@ -18,7 +18,7 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
 
   /**
    * Storage controller.
-   * 
+   *
    * @var Dumper_Controller_Filestorage
    */
   public $storage;
@@ -35,18 +35,10 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
     $this->entity_type = $entity_type;
 
     if (!is_null($entity)) {
-      $this->entity = $entity;
+      $this->setEntity($entity);
     }
 
-    if (!$storage) {
-      $this->storage = $storage;
-    }
-    else {
-      $path  = $this->og->identifier() . '/';
-      $path .= $this->entity->entityType() . '/';
-      $path .= $this->entity->identifier();
-      $this->storage = new Dumper_Controller_Filestorage($path);
-    }
+    $this->setStorage($storage);
   }
 
   /**
@@ -87,5 +79,12 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
 
   public function setEntity($entity) {
     $this->entity = $entity;
+  }
+
+  public function setStorage($storage = NULL) {
+    if (!$storage) {
+      $storage = new Dumper_Controller_Filestorage();
+    }
+    $this->storage = $storage;
   }
 }

@@ -37,7 +37,6 @@ class Dumper_Controller_Og_Process {
     $select->range(0, 1);
 
     if ($item = $select->execute()->fetchObject()) {
-      drush_print_r($item); exit;
       return new Dumper_Data_QueueItem($this->og_controller->og_node->nid, $item->entity_type, $item->entity_id);
     }
 
@@ -58,7 +57,6 @@ class Dumper_Controller_Og_Process {
       }
 
       if (FALSE !== $this->processQueueItem($queue_item)) {
-        drush_print_r($queue_item);
         db_update($this->og_controller->queue_table)
           ->fields(array('processed' => 1))
           ->condition('entity_type', $queue_item->entity_type)
