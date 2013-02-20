@@ -21,10 +21,13 @@ class Dumper_Controller_Og {
    */
   public $queue_table = 'dumper_content_queue';
 
-  public $timeout = 300;
-  public $entity_types = array(
+  /**
+   * Supported entity types.
+   *
+   * @var array
+   */
+  public $entity_types = array( # 'og_membership_type', 'og_membership',
     'comment', 'node',
-    'og_membership_type', 'og_membership',
     'taxonomy_vocabulary', 'taxonomy_term',
     'user'
   );
@@ -125,8 +128,10 @@ class Dumper_Controller_Og {
   }
 
   /**
+   * Wrapper method to start the process
    *
    * @task process
+   * @see Dumper_Controller_Og_Process
    */
   public function process() {
     $process = new Dumper_Controller_Og_Process($this);
