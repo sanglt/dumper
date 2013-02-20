@@ -10,6 +10,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @task fetch
    */
   public function getItemIds() {
+    return array();
   }
 
   public function queueItems() {
@@ -24,10 +25,16 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @param int $entity_id
    */
   public function queueItem($entity_id) {
-    return db_insert($this->queue_table, array(
-      'og_id' => $this->og->identifier(),
+    drush_print_r(array($this->queue_table, array(
+      'og_id' => $this->og->nid,
       'entity_type' => $this->entity_type,
-      'entity_id' => $nid,
+      'entity_id' => $entity_id,
+    )));
+
+    return db_insert($this->queue_table, array(
+      'og_id' => $this->og->nid,
+      'entity_type' => $this->entity_type,
+      'entity_id' => $entity_id,
     ))->execute();
   }
 

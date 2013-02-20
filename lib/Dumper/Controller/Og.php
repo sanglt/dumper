@@ -56,7 +56,6 @@ class Dumper_Controller_Og {
 
     if (!og_is_group('node', $og_node)) {
       $wrapper = entity_metadata_wrapper('node', $og_node);
-
       throw new Dumper_Controller_Exception_Invalid_Og('Node is not an organic group.');
     }
 
@@ -121,7 +120,7 @@ class Dumper_Controller_Og {
   public function queue() {
     foreach ($this->entity_types as $entity_type) {
       $controller = $this->getDataController($entity_type);
-      $controller->queueItem();
+      $controller->queueItems();
     }
   }
 

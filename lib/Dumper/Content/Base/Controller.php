@@ -14,6 +14,8 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
    */
   public $entity;
 
+  public $queue_table = 'dumper_content_queue';
+
   /**
    *
    * @var type
@@ -29,6 +31,7 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
 
   public function __construct($og, $entity_type, $entity = NULL, $storage = NULL) {
     $this->og = $og;
+    $this->entity_type = $entity_type;
 
     if (!is_null($entity)) {
       $this->entity = $entity;
