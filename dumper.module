@@ -20,16 +20,13 @@ spl_autoload_register('dumper_autoload');
 function dumper_autoload($class) {
   $do = strpos($class, 'Dumper_') === 0;
   $do = $do || strpos($class, 'Restorer_') === 0;
-  if ($do) {
-    $file = dirname(__FILE__) . '/lib/' . str_replace('_', '/', $class) . '.php';
+  if (!$do) return;
 
-    if (file_exists($file)) {
-      require_once $file;
-    }
-    else {
-      throw new Exception("Autoload fails: {$class}");
-    }
+  if (!file_exists($file = dirname(__FILE__) . '/lib/' . str_replace('_', '/', $class) . '.php')) {
+    throw new Exception("Autoload fails: {$class}");
   }
+
+  require_once $file;
 }
 
 /**
