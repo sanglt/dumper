@@ -22,6 +22,9 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
     return $ids;
   }
 
+  /**
+   * Fetch IDs and add them to queue.
+   */
   public function queueItems() {
     // Delete the current queue
     $query = db_delete($this->queue_table)
