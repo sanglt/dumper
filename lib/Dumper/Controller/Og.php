@@ -119,6 +119,10 @@ class Dumper_Controller_Og {
    * @task queue
    */
   public function queue() {
+    if (function_exists('drush_log')) {
+      drush_log("Queue contents before dumping for group: {$this->og_node->title}");
+    }
+
     foreach ($this->entity_types as $entity_type) {
       $controller = $this->getDataController($entity_type);
       $controller->queueItems();

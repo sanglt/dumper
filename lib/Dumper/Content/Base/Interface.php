@@ -5,6 +5,5 @@ interface Dumper_Content_Base_Interface {
   public function setEntity($entity);
   public function queueItems();
   public function queueItem($entity_id);
-  public function processQueuedItems();
-  public function processQueuedItem(Dumper_Data_QueueItem $queue_item);
+  public function processQueueItem(Dumper_Data_QueueItem $queue_item);
 }

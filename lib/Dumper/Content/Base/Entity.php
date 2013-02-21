@@ -2,6 +2,13 @@
 
 class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   /**
+   * Entity wrapper
+   *
+   * @var EntityMetadataWrapper
+   */
+  public $meta;
+
+  /**
    * Get fields of the entity.bundle.
    */
   public function getFields() {}
@@ -59,15 +66,103 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @param Dumper_Data_QueueItem $queue_item
    */
   public function processQueueItem(Dumper_Data_QueueItem $queue_item) {
+    if (TRUE !== $this->loadEntity($queue_item)) return;
+    $this->preprocessQueueItem($queue_item);
+    $this->write($queue, $entity);
+  }
+
+  protected function preprocessQueueItem(Dumper_Data_QueueItem $queue_item) {
+    $this->meta = entity_metadata_wrapper($queue_item->entity_type, $this->entity);
+    foreach ($this->meta->getPropertyInfo() as $field_name => $property_info) {
+      if (!empty($property_info['field'])) {
+        $this->preprocessQueueItemField($field_name, $property_info);
+      }
+    }
+  }
+
+  protected function preprocessQueueItemField($field_name, $property_info) {
+    switch ($property_info['type']) {
+      case 'field_item_file':
+      case 'list<field_item_file>':
+      case 'field_item_image':
+      case 'list<field_item_image>':
+        list($controller, $extended_entity_ids) = $this->preprocessQueueItemFieldExtendedEntity($field_name, $property_info, 'file');
+        break;
+      case 'taxonomy_term':
+      case 'list<taxonomy_term>':
+        list($controller, $extended_entity_ids) = $this->preprocessQueueItemFieldExtendedEntity($field_name, $property_info, 'taxonomy_term');
+        break;
+      default:
+        drush_print_r('    ' . $property_info['type']);
+    }
+
+    if (isset($controller) && !empty($extended_entity_ids)) {
+      foreach ($extended_entity_ids as $extended_entity_id) {
+        # drush_print_r('    ' . $property_info['type'] . ': ' . $extended_entity_id);
+        $controller->queueItem($extended_entity_id);
+      }
+      unset($controller);
+    }
+  }
+
+  protected function preprocessQueueItemFieldExtendedEntity($field_name, $property_info, $extended_entity_type) {
+    if (empty($this->meta->{$field_name})) return;
+    if (!$values = $this->meta->{$field_name}->value()) return;
+
+    $extended_entity_ids = array();
+
+    switch ($extended_entity_type) {
+      case 'file':
+        $key = 'fid';
+        break;
+      case 'taxonomy_term':
+        $key = 'tid';
+        break;
+      default:
+        throw new Exception('Unknown extended entity type.');
+    }
+
+    if (!$is_list = strpos($property_info['type'], 'list<') === 0) {
+      $extended_entity_ids[] = is_object($values) ? $values->{$key} : $values[$key];
+    }
+    else {
+      foreach ($values as $field_item) {
+        $extended_entity_ids[] = is_object($field_item) ? $field_item->{$key} : $field_item[$key];
+      }
+    }
+
+    return array(
+      $this->og_controller->getDataController('file'),
+      $extended_entity_ids
+    );
+  }
+
+  /**
+   * Load entity from QueueItem, throw exception if there is some unexpected
+   * result.
+   *
+   * @param Dumper_Data_QueueItem $queue_item
+   * @return Entity
+   */
+  protected function loadEntity(Dumper_Data_QueueItem $queue_item, $throw = TRUE) {
     if (function_exists('drush_log')) {
       drush_log(" › Processing {$queue_item->entity_type}#{$queue_item->entity_id}");
     }
 
-    $entity = entity_load_single($queue_item->entity_type, $queue_item->entity_id);
+    if ($this->entity = entity_load_single($queue_item->entity_type, $queue_item->entity_id)) {
+      return TRUE;
+    }
+
+    if (!$entity && $throw) {
+      throw new Exception('Entiy not found');
+    }
+  }
+
+  protected function write($queue_item, $entity) {
     $path  = "private://dumper/{$this->og_controller->og_node->nid}";
     $path .= "/{$queue_item->entity_type}/{$queue_item->entity_id}.json";
     $this->storage->setPath($path);
-    
+
     return $this->storage->write($entity);
   }
 }

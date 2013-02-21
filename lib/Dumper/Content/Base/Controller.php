@@ -8,12 +8,6 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
    */
   public $og_controller;
 
-  /**
-   *
-   * @var Entity
-   */
-  public $entity;
-
   public $queue_table = 'dumper_content_queue';
 
   /**
@@ -29,6 +23,13 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
    * @var string
    */
   public $entity_type;
+
+  /**
+   * Entity object
+   *
+   * @var stdClass
+   */
+  protected $entity;
 
   public function __construct($og_controller, $entity_type, $entity = NULL, $storage = NULL) {
     $this->og_controller = $og_controller;
@@ -65,10 +66,7 @@ class Dumper_Content_Base_Controller implements Dumper_Content_Base_Interface {
     return FALSE;
   }
 
-  public function processQueuedItems() {
-  }
-
-  public function processQueuedItem(Dumper_Data_QueueItem $queue_item) {
+  public function processQueueItem(Dumper_Data_QueueItem $queue_item) {
   }
 
   public function queueItems() {
