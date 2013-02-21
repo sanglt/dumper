@@ -4,7 +4,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   /**
    * Entity wrapper
    *
-   * @var EntityMetadataWrapper
+   * @var EntityStructureWrapper
    */
   public $meta;
 
@@ -50,14 +50,19 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @param int $entity_id
    */
   public function queueItem($entity_id) {
-    return db_insert($this->queue_table)
-      ->fields(array(
-        'gid' => $this->og_controller->og_node->nid,
-        'entity_type' => $this->entity_type,
-        'entity_id' => $entity_id,
-        'processed' => 0
-      ))
-      ->execute();
+    // An item can not be indexed twice
+    $pk = array('gid' => $this->og_controller->og_node->nid,
+                'entity_type' => $this->entity_type,
+                'entity_id' => $entity_id);
+    $counter = db_select($this->queue_table);
+    $counter->conditions($pk);
+    $counter->addExpression('COUNT(*)', 'counter');
+    $counter->execute()->fetchColumn();
+    if (!$counter) {
+      return db_insert($this->queue_table)
+              ->fields(array('processed' => 0) + $pk)
+              ->execute();
+    }
   }
 
   /**
@@ -68,9 +73,14 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   public function processQueueItem(Dumper_Data_QueueItem $queue_item) {
     if (TRUE !== $this->loadEntity($queue_item)) return;
     $this->preprocessQueueItem($queue_item);
-    $this->write($queue, $entity);
+    $this->write();
   }
 
+  /**
+   * Method called before an entity is indexed.
+   *
+   * @param Dumper_Data_QueueItem $queue_item
+   */
   protected function preprocessQueueItem(Dumper_Data_QueueItem $queue_item) {
     $this->meta = entity_metadata_wrapper($queue_item->entity_type, $this->entity);
     foreach ($this->meta->getPropertyInfo() as $field_name => $property_info) {
@@ -93,7 +103,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
         list($controller, $extended_entity_ids) = $this->preprocessQueueItemFieldExtendedEntity($field_name, $property_info, 'taxonomy_term');
         break;
       default:
-        drush_print_r('    ' . $property_info['type']);
+        # drush_print_r('    ' . $property_info['type']);
     }
 
     if (isset($controller) && !empty($extended_entity_ids)) {
@@ -153,16 +163,16 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
       return TRUE;
     }
 
-    if (!$entity && $throw) {
+    if (!$this->entity && $throw) {
       throw new Exception('Entiy not found');
     }
   }
 
-  protected function write($queue_item, $entity) {
+  protected function write() {
     $path  = "private://dumper/{$this->og_controller->og_node->nid}";
-    $path .= "/{$queue_item->entity_type}/{$queue_item->entity_id}.json";
-    $this->storage->setPath($path);
-
-    return $this->storage->write($entity);
+    $path .= "/". $this->meta->type() ."/". $this->meta->getIdentifier() .".json";
+    drush_print_r($path);
+    # $this->storage->setPath($path);
+    # return $this->storage->write($this->entity);
   }
 }
