@@ -52,24 +52,24 @@ class Dumper_Controller_Og_Process {
   public function process() {
     $time_start = time();
 
-    while (time() - $time_start <= $this->timeout) {
-      if (!$queue_item = $this->getNextQueueItem()) {
+    while (TRUE) {
+      if (time() - $time_start > $this->timeout) {
+        throw new Dumper_Controller_Exception_Timeout();
+      }
+
+      if ($queue_item = $this->getNextQueueItem()) {
+        $this->processQueueItem($queue_item);
+      }
+      else {
         break;
       }
-
-      if (FALSE === $this->processQueueItem($queue_item)) {
-        if (function_exists('drush_set_error')) {
-          drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
-        }
-      }
-
-      db_update($this->og_controller->queue_table)
-        ->fields(array('processed' => 1))
-        ->condition('entity_type', $queue_item->entity_type)
-        ->condition('entity_id', $queue_item->entity_id)
-        ->execute();
-      continue;
     }
+
+    $storage = new Dumper_Controller_Filestorage();
+    $uri  = "private://dumper/{$this->og_controller->og_node->nid}";
+    $path = "private://dumper_compress/{$this->og_controller->og_node->nid}.tar";
+    $storage->setPath($path);
+    $storage->compress($uri);
   }
 
   /**
@@ -80,6 +80,20 @@ class Dumper_Controller_Og_Process {
    */
   public function processQueueItem($queue_item) {
     $controller = $this->og_controller->getDataController($queue_item->entity_type);
-    return $controller->processQueueItem($queue_item);
+
+    if (FALSE === $controller->processQueueItem($queue_item)) {
+      if (function_exists('drush_set_error')) {
+        drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
+      }
+      return FALSE;
+    }
+
+    db_update($this->og_controller->queue_table)
+      ->fields(array('processed' => 1))
+      ->condition('entity_type', $queue_item->entity_type)
+      ->condition('entity_id', $queue_item->entity_id)
+      ->execute();
+
+    return TRUE;
   }
 }

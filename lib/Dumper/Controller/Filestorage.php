@@ -42,8 +42,21 @@ class Dumper_Controller_Filestorage {
     return file_unmanaged_copy($source_uri, $this->getPath(), $replace);
   }
 
+  /**
+   * Delete a file -- a wrapper for file_unmanaged_delete().
+   */
   public function delete() {
     return file_unmanaged_delete($this->getPath());
+  }
+
+  /**
+   * Compess a file or a directory.
+   */
+  public function compress($uri) {
+    $tar = new ArchiverTar($this->getPath());
+    foreach (file_scan_directory($uri, '/.*/') as $file) {
+      $tar->add($file->uri);
+    }
   }
 }
 
