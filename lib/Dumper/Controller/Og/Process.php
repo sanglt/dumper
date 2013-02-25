@@ -67,7 +67,7 @@ class Dumper_Controller_Og_Process {
 
     $storage = new Dumper_Controller_Filestorage();
     $uri  = "private://dumper/{$this->og_controller->og_node->nid}";
-    $path = "private://dumper_compress/{$this->og_controller->og_node->nid}.tar";
+    $path = "private://dumper_compress/og.{$this->og_controller->og_node->nid}/". date('Y/m/d') ."/backup.tar";
     $storage->setPath($path);
     $storage->compress($uri);
   }

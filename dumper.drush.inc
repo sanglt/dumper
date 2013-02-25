@@ -82,10 +82,3 @@ function dumper_drush_command_restore($nid, $date) {
   $restorer = new Restorer_Controller_Og($node = node_load($nid));
   $restorer->restore();
 }
-
-function dumper_drush_command_debug() {
-  $og = node_load(1);
-  $dumper = new Dumper_Controller_Og($og);
-  $dumper->queue();
-  $dumper->process();
-}
