@@ -9,6 +9,8 @@
  * Implements hook_drush_command().
  */
 function dumper_drush_command() {
+  $items['dumper_debug']['callback'] = 'dumper_drush_command_debug';
+
   $items['dumper_backup'] = array(
     'description' => 'Backup contents in an organic group',
     'callback' => 'dumper_drush_command_backup',
@@ -79,4 +81,11 @@ function dumper_drush_command_restore($nid, $date) {
 
   $restorer = new Restorer_Controller_Og($node = node_load($nid));
   $restorer->restore();
+}
+
+function dumper_drush_command_debug() {
+  $og = node_load(1);
+  $dumper = new Dumper_Controller_Og($og);
+  $dumper->queue();
+  $dumper->process();
 }

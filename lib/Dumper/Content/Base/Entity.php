@@ -50,15 +50,19 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    * @param int $entity_id
    */
   public function queueItem($entity_id) {
-    // An item can not be indexed twice
+    // An item can not be queued twice
     $pk = array('gid' => $this->og_controller->og_node->nid,
                 'entity_type' => $this->entity_type,
                 'entity_id' => $entity_id);
     $counter = db_select($this->queue_table);
     $counter->conditions($pk);
     $counter->addExpression('COUNT(*)', 'counter');
-    $counter->execute()->fetchColumn();
+    $counter = $counter->execute()->fetchColumn();
     if (!$counter) {
+      if (function_exists('drush_log')) {
+        drush_log("    Queuing {$pk['entity_type']}#{$pk['entity_id']}");
+      }
+
       return db_insert($this->queue_table)
               ->fields(array('processed' => 0) + $pk)
               ->execute();
@@ -171,8 +175,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
   protected function write() {
     $path  = "private://dumper/{$this->og_controller->og_node->nid}";
     $path .= "/". $this->meta->type() ."/". $this->meta->getIdentifier() .".json";
-    drush_print_r($path);
-    # $this->storage->setPath($path);
-    # return $this->storage->write($this->entity);
+    $this->storage->setPath($path);
+    return $this->storage->write($this->entity);
   }
 }
