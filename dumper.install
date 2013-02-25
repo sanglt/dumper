@@ -12,7 +12,7 @@ function dumper_schema() {
       'entity_type' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''),
       'entity_id'   => array('type' => 'int', 'not null' => TRUE, 'unsigned' => TRUE),
     ),
-    'primary key' => array('nid', 'entity_type', 'entity_id'),
+    'primary key' => array('gid', 'entity_type', 'entity_id'),
     'indexes' => array(
       'entity_type' => array(array('entity_type', 4)),
       'processed'   => array('processed'),
