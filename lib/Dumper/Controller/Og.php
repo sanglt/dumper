@@ -35,8 +35,17 @@ class Dumper_Controller_Og {
    */
   public function __construct($og_node) {
     if ($this->validateOgNode($og_node)) {
-      $this->og_node = $og_node;
+      $this->setOg($og_node);
     }
+  }
+
+  /**
+   * Set value og_node property.
+   *
+   * @param stdClass $og_node
+   */
+  public function setOg($og_node) {
+    $this->og_node = $og_node;
   }
 
   /**
