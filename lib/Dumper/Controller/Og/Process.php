@@ -47,6 +47,7 @@ class Dumper_Controller_Og_Process {
    * Wrapper function to process the queues.
    *
    * @task process
+   * @todo resume
    */
   public function process() {
     $time_start = time();
