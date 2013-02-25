@@ -57,17 +57,18 @@ class Dumper_Controller_Og_Process {
         break;
       }
 
-      if (FALSE !== $this->processQueueItem($queue_item)) {
-        db_update($this->og_controller->queue_table)
-          ->fields(array('processed' => 1))
-          ->condition('entity_type', $queue_item->entity_type)
-          ->condition('entity_id', $queue_item->entity_id)
-          ->execute();
-        continue;
+      if (FALSE === $this->processQueueItem($queue_item)) {
+        if (function_exists('drush_set_error')) {
+          drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
+        }
       }
-      elseif (function_exists('drush_set_error')) {
-        drush_set_error("Failed on processing {$queue_item->entity_type}#{$queue_item->entity_id}");
-      }
+
+      db_update($this->og_controller->queue_table)
+        ->fields(array('processed' => 1))
+        ->condition('entity_type', $queue_item->entity_type)
+        ->condition('entity_id', $queue_item->entity_id)
+        ->execute();
+      continue;
     }
   }
 

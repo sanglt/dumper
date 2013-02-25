@@ -35,6 +35,13 @@ class Dumper_Controller_Filestorage {
     return file_unmanaged_save_data($data, $this->getPath(), $replace);
   }
 
+  /**
+   * Copy a file to backup area.
+   */
+  public function copy($source_uri, $replace = FILE_EXISTS_REPLACE) {
+    return file_unmanaged_copy($source_uri, $this->getPath(), $replace);
+  }
+
   public function delete() {
     return file_unmanaged_delete($this->getPath());
   }
