@@ -141,6 +141,10 @@ class Dumper_Controller_Og {
       $controller = $this->getDataController($entity_type);
       $controller->queueItems();
     }
+
+    // Queue og-node itself
+    $controller = $this->getDataController('node');
+    $controller->queueItem($this->og_node->nid);
   }
 
   /**
