@@ -26,9 +26,7 @@ class Dumper_Controller_Og {
    *
    * @var array
    */
-  public $entity_types = array(
-    'user', 'node', 'comment', 'taxonomy_vocabulary', 'taxonomy_term',
-  );
+  public $entity_types = array('og_membership');
 
   /**
    * @task config
@@ -82,6 +80,9 @@ class Dumper_Controller_Og {
    */
   public function getDataController($entity_type) {
     switch ($entity_type) {
+      case 'og_membership':
+        $class = 'Dumper_Content_Og_Membership';
+        break;
       case 'comment':
         $class = 'Dumper_Content_Comment';
         break;
@@ -133,6 +134,10 @@ class Dumper_Controller_Og {
     }
 
     foreach ($this->entity_types as $entity_type) {
+      if (function_exists('drush_log')) {
+        drush_log(" › Check entity type: {$entity_type}");
+      }
+
       $controller = $this->getDataController($entity_type);
       $controller->queueItems();
     }

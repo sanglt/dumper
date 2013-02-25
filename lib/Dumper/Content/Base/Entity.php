@@ -18,16 +18,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
    *
    * @task fetch
    */
-  public function getItemIds() {
-    $select = db_select('og_membership', 'ogm');
-    $select->condition('ogm.gid', $this->og_controller->og_node->nid);
-    $select->condition('ogm.group_type', 'node');
-    $select->condition('ogm.entity_type', $this->entity_type);
-    $select->fields('ogm', array('etid'));
-    $ids = $select->execute()->fetchAllKeyed();
-    $ids = array_keys($ids);
-    return $ids;
-  }
+  public function getItemIds() {}
 
   /**
    * Fetch IDs and add them to queue.
@@ -54,13 +45,14 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
     $pk = array('gid' => $this->og_controller->og_node->nid,
                 'entity_type' => $this->entity_type,
                 'entity_id' => $entity_id);
-    $counter = db_select($this->queue_table);
-    $counter->conditions($pk);
+    $counter = db_select($this->queue_table, 'og_queue');
+    $counter->condition('og_queue.gid',         $pk['gid']);
+    $counter->condition('og_queue.entity_type', $pk['entity_type']);
+    $counter->condition('og_queue.entity_id',   $pk['entity_id']);
     $counter->addExpression('COUNT(*)', 'counter');
-    $counter = $counter->execute()->fetchColumn();
-    if (!$counter) {
+    if (!$counter = $counter->execute()->fetchColumn()) {
       if (function_exists('drush_log')) {
-        drush_log("    Queuing {$pk['entity_type']}#{$pk['entity_id']}");
+        drush_log("    » Queuing {$pk['entity_type']}#{$pk['entity_id']}");
       }
 
       return db_insert($this->queue_table)

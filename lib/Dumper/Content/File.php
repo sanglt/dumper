@@ -5,7 +5,7 @@ class Dumper_Content_File extends Dumper_Content_Base_Entity {
     if (!parent::preprocessQueueItem($queue_item)) {
       return FALSE;
     }
-    
+
     drush_print_r($this->entity);
   }
 }
