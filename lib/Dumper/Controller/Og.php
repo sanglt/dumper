@@ -133,6 +133,10 @@ class Dumper_Controller_Og {
       drush_log("Queue contents before dumping for group: {$this->og_node->title}");
     }
 
+    db_delete($this->queue_table)
+      ->condition('gid', $this->og_node->nid)
+      ->execute();
+
     foreach ($this->entity_types as $entity_type) {
       if (function_exists('drush_log')) {
         drush_log(" › Check entity type: {$entity_type}");
