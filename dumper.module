@@ -5,9 +5,8 @@
  *
  * Module to help dump and restore OG content.
  *
- * @TODO: File field › Add media field to queue.
- * @TODO: Taxonomy term field › Add taxonomy temr to queue
- * @TODO: Entity Reference queue › …
+ * @TODO: Comment is not dumped
+ * @TODO: Entity Reference field
  * @TODO: Save entity path if supported.
  * @TODO: Also dump entity that has reference to OG. In AIO case, there are
  *          topic-nodes has reference fields to Schoold (OG).
