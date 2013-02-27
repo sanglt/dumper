@@ -108,7 +108,7 @@ class Dumper_Controller_Og {
         $class = 'Dumper_Content_User';
         break;
       default:
-        throw new Dump_Controller_Exception_Not_Found_Controller();
+        throw new Dumper_Controller_Exception_Not_Found_Controller();
     }
 
     if (!empty($class)) {
@@ -117,7 +117,7 @@ class Dumper_Controller_Og {
         return $controller;
       }
 
-      throw new Dump_Controller_Exception_Malware_Interface();
+      throw new Dumper_Controller_Exception_Malware_Interface();
     }
 
     return FALSE;
