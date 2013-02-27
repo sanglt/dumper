@@ -14,6 +14,18 @@ class Dumper_Controller_Filestorage {
     return $this->path;
   }
 
+  /**
+   * Get real local path.
+   *
+   * @param string $path
+   * @return string
+   */
+  public function getRealPath($path) {
+    $wrapper = file_stream_wrapper_get_instance_by_uri($path);
+    $wrapper->setUri($path);
+    return $wrapper->realpath();
+  }
+
   public function isWritable() {
     if (file_exists($this->path)) {
       return is_writable($this->path);
@@ -52,10 +64,16 @@ class Dumper_Controller_Filestorage {
   /**
    * Compess a file or a directory.
    */
-  public function compress($uri) {
-    $tar = new ArchiverTar($this->getPath());
+  public function compress($uri, $delete_old = TRUE) {
+    $uri = $this->getRealPath($uri);
+    $tar = new ArchiverTar($path = $this->getRealPath($this->getPath()));
+
     foreach (file_scan_directory($uri, '/.*/') as $file) {
       $tar->add($file->uri);
+    }
+
+    if ($delete_old) {
+      file_unmanaged_delete_recursive($uri);
     }
   }
 }
