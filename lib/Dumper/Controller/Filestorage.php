@@ -42,7 +42,7 @@ class Dumper_Controller_Filestorage {
    */
   public function write($data, $replace = FILE_EXISTS_REPLACE) {
     if (!is_string($data)) {
-      $data = json_encode($data);
+      $data = serialize($data);
     }
     return file_unmanaged_save_data($data, $this->getPath(), $replace);
   }
@@ -65,7 +65,7 @@ class Dumper_Controller_Filestorage {
    * Compess a file or a directory.
    */
   public function compress($uri, $delete_old = TRUE) {
-    $uri = $this->getRealPath($uri);
+    # $uri = $this->getRealPath($uri);
     $tar = new ArchiverTar($path = $this->getRealPath($this->getPath()));
 
     foreach (file_scan_directory($uri, '/.*/') as $file) {
