@@ -84,6 +84,12 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
         $this->preprocessQueueItemField($field_name, $property_info);
       }
     }
+
+    // Queue user if entity has uid property (node, comment, file, …)
+    if (!empty($this->entity->uid)) {
+      $controller = $this->og_controller->getDataController('user');
+      $controller->queueItem($this->entity->uid);
+    }
   }
 
   protected function preprocessQueueItemField($field_name, $property_info) {
@@ -98,13 +104,10 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
       case 'list<taxonomy_term>':
         list($controller, $extended_entity_ids) = $this->preprocessQueueItemFieldExtendedEntity($field_name, $property_info, 'taxonomy_term');
         break;
-      default:
-        # drush_print_r('    ' . $property_info['type']);
     }
 
     if (isset($controller) && !empty($extended_entity_ids)) {
       foreach ($extended_entity_ids as $extended_entity_id) {
-        # drush_print_r('    ' . $property_info['type'] . ': ' . $extended_entity_id);
         $controller->queueItem($extended_entity_id);
       }
       unset($controller);
@@ -138,7 +141,7 @@ class Dumper_Content_Base_Entity extends Dumper_Content_Base_Controller {
     }
 
     return array(
-      $this->og_controller->getDataController('file'),
+      $this->og_controller->getDataController($extended_entity_type),
       $extended_entity_ids
     );
   }
