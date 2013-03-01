@@ -39,7 +39,7 @@ class Restorer_Controller_Og {
     $ok = file_exists($this->getBackupURI()) && is_readable($this->getBackupURI());
 
     if (!$ok) {
-      throw new Exception('Backup file not found.');
+      throw new Exception('Backup file not found: ' . $this->getBackupURI());
     }
 
     return $ok;
@@ -53,7 +53,36 @@ class Restorer_Controller_Og {
   public function getBackupURI() {
     $path = 'private://dumper_compress/og.%d/%s/backup.tar';
     $path = sprintf($path, $this->og_node->nid, $this->date->format('Y/m/d'));
-    return $path;
+    if (file_prepare_directory($dir = dirname($path), FILE_CREATE_DIRECTORY)) {
+      return $this->getRealPath($path);
+    }
+    return FALSE;
+  }
+
+  /**
+   * Directory to extract the backed up tar file to.
+   *
+   * @return string
+   */
+  public function getRestoreURI() {
+    $path = sprintf('private://dumper/restore.%d', $this->og_node->nid);
+    if (file_prepare_directory($dir = dirname($path), FILE_CREATE_DIRECTORY)) {
+      drush_print_r(array($path));
+      return $this->getRealPath($path);
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get real local path.
+   *
+   * @param string $path
+   * @return string
+   */
+  public function getRealPath($path) {
+    $wrapper = file_stream_wrapper_get_instance_by_uri($path);
+    $wrapper->setUri($path);
+    return $wrapper->realpath();
   }
 
   /**
@@ -99,7 +128,6 @@ class Restorer_Controller_Og {
       if (class_implements($controller, 'Restorer_Content_Base_Interface')) {
         return $controller;
       }
-
       throw new Dumper_Controller_Exception_Malware_Interface();
     }
 
@@ -110,8 +138,14 @@ class Restorer_Controller_Og {
    * Method to restore.
    */
   public function restore() {
+    $source = $this->getBackupURI();
+    $dest = $this->getRestoreURI();
+
+    file_unmanaged_delete_recursive($dest);
+
     // uncompress the tar file
-    $tar = new ArchiverTar($file = $this->getBackupURI());
+    $tar = new ArchiverTar($source);
+    $tar->extract($dest);
 
     // loops and restore the entities
     foreach ($this->entity_types as $entity_type) {
