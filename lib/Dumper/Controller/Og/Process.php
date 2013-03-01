@@ -52,6 +52,12 @@ class Dumper_Controller_Og_Process {
   public function process() {
     $time_start = time();
 
+    // Place to dump data to
+    $uri  = "private://dumper/{$this->og_controller->og_node->nid}";
+
+    // Clean up the tmp directory
+    file_unmanaged_delete_recursive($uri);
+
     while (TRUE) {
       if (time() - $time_start > $this->timeout) {
         throw new Dumper_Controller_Exception_Timeout();
@@ -66,7 +72,6 @@ class Dumper_Controller_Og_Process {
     }
 
     $storage = new Dumper_Controller_Filestorage();
-    $uri  = "private://dumper/{$this->og_controller->og_node->nid}";
     $path = "private://dumper_compress/og.{$this->og_controller->og_node->nid}/". date('Y/m/d') ."/backup.tar";
     $storage->setPath($path);
     $storage->compress($uri);
