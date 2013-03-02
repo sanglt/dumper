@@ -160,6 +160,6 @@ class Restorer_Controller_Og {
    */
   public function restoreEntityType($entity_type) {
     $controller = $this->getDataController($entity_type);
-    $controller->restore();
+    $controller->restoreEntityType();
   }
 }
