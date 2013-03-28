@@ -62,7 +62,7 @@ class Dumper_Controller_Og {
       throw new Dumper_Controller_Exception_Invalid_Og('Object is not a node.');
     }
 
-    if (!og_is_group('node', $og_node)) {
+    if (!og_is_group_type('node', $og_node->type)) {
       $wrapper = entity_metadata_wrapper('node', $og_node);
       throw new Dumper_Controller_Exception_Invalid_Og('Node is not an organic group.');
     }
